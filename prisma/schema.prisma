@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Tabel untuk menyimpan desain frame dari Admin
+model Frame {
+  id        String   @id @default(cuid())
+  name      String   // Contoh: "Valentine Edition"
+  imageUrl  String   // URL gambar frame (PNG transparan)
+  price     Int      // Harga untuk frame ini, contoh: 15000
+  createdAt DateTime @default(now())
+
+  // Relasi: Satu frame bisa dipakai di banyak transaksi
+  transactions Transaction[]
+}
+
+// Tabel untuk mencatat sesi dan pembayaran
+model Transaction {
+  id           String   @id @default(cuid())
+  amount       Int      // Total bayar
+  status       String   @default("PENDING") // PENDING, SUCCESS, FAILED
+  snapToken    String?  // Token dari Midtrans/Xendit nantinya
+  resultImage  String?  // URL hasil foto gabungan user (opsional)
+  createdAt    DateTime @default(now())
+
+  // Relasi ke Frame
+  frameId      String
+  frame        Frame    @relation(fields: [frameId], references: [id])
+}
