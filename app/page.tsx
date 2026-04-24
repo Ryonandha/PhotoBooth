@@ -1,9 +1,9 @@
 import prisma from "@/lib/prisma";
 import Image from "next/image";
+import Link from "next/link";
 
 // Ini adalah Server Component. Next.js akan mengambil data langsung dari database
 export default async function Home() {
-  // Mengambil semua data frame dari tabel Frame
   const frames = await prisma.frame.findMany({
     orderBy: {
       createdAt: 'desc'
@@ -20,7 +20,6 @@ export default async function Home() {
           Pilih desain frame favoritmu dan abadikan momen sekarang!
         </p>
 
-        {/* Grid untuk menampilkan daftar frame */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {frames.map((frame) => (
             <div 
@@ -28,7 +27,6 @@ export default async function Home() {
               className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
             >
               <div className="relative w-full h-80 bg-gray-200">
-                {/* Kita gunakan tag img biasa dulu untuk kemudahan menggunakan external URL */}
                 <img 
                   src={frame.imageUrl} 
                   alt={frame.name} 
@@ -40,9 +38,12 @@ export default async function Home() {
                 <p className="text-red-500 font-bold mt-2">
                   Rp {frame.price.toLocaleString('id-ID')}
                 </p>
-                <button className="mt-4 w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition-colors">
-                  Pilih Frame Ini
-                </button>
+                {/* 2. Bungkus button dengan Link menuju route dinamis */}
+                <Link href={`/session/${frame.id}`}>
+                  <button className="mt-4 w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition-colors">
+                    Pilih Frame Ini
+                  </button>
+                </Link>
               </div>
             </div>
           ))}
